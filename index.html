@@ -1,5 +1,7 @@
+<!-- code available at https://gist.github.com/armollica/a4fa76d348a9825f0c90328dddf0d56b -->
 <html>
   <head>
+		<title>points in map</title>
     <style>
       
     </style>
@@ -20,29 +22,35 @@
       var context = canvas.node().getContext("2d");
 
       var projection = d3.geo.mercator()
-          .scale(200000)
+          .scale(3000)
+//.scale(400000)
           .translate([width / 2, height / 2])
-          .center([-77.02, 38.894]);
+          .center([-4.03188898,37.54455857999996]);
+//spain .center([-2.75, 42.03]);
+//dc .center([-77.02, 38.894]);
 
       var path = d3.geo.path()
           .projection(projection)
           .context(context)
 
-      d3.json("dc.json", function(error, dc) {
+      d3.json("recintos_autonomicas_inspire_peninbal_etrs89_simplificado_2.json", function(error, dc) {
+//recintos_autonomicas_inspire_peninbal_etrs89.geojson dc.json
+//recintos_autonomicas_inspire_peninbal_etrs89_simplificado_2.json
         if (error) throw error;
         
         dc.features
-          .forEach(function(feature) {
+          .forEach(function(feature) { //iteration through each region in the json
+
             feature.properties.area = path.area(feature);
             feature.properties.bounds = path.bounds(feature);
             
-            // mobility_total = total population
+            // mobility_total = total population. Calculates totals.
+/*
             feature.properties.mobility_total = +feature.properties.mobility_total;
             feature.properties.mobility_same_house = +feature.properties.mobility_same_house;
             feature.properties.mobility_different_house_same_metro = +feature.properties.mobility_different_house_same_metro;
-            feature.properties.pct_resident = (feature.properties.mobility_same_house + 
-                feature.properties.mobility_different_house_same_metro) /
-                feature.properties.mobility_total;
+            feature.properties.pct_resident = feature.properties.mobility_same_house / feature.properties.mobility_total;
+*/
           });
 
         dc.features
@@ -62,8 +70,10 @@
             var p = feature.properties.area / (width * height);
             
             // desired number of pixels to draw in polygon (only approximates) 
-            var n = feature.properties.mobility_total / 10;
-            
+            var n = feature.properties.PP / 5000; //draws 1 pixel per 10 houses
+            //var n = feature.properties.mobility_total / 7;
+						//	"NATCODE"
+
             var points = createPoints(width, height, p, n);
             
             // draw a pixel for every 10 people
@@ -71,14 +81,17 @@
               context.beginPath();
               
               // blue for old resident, orange for new resident
-              context.fillStyle = Math.random() < feature.properties.pct_resident ? 
-                  "#91bfdb" : "#fc8d59";
+              //context.fillStyle = Math.random() < feature.properties.pct_resident ? 
+               //   "#ff0000" : "#00FF00";
+							context.fillStyle = "#00F";
                   
               // draw pixel
               // (doesn't show up on map if it's outside the polygon b/c of clip)            
               context.fillRect(x + d[0], y + d[1], 1, 1); 
             });
-            
+
+
+						
             context.restore();  // removes the clip path
           });
         
@@ -86,19 +99,19 @@
         
         // Draw legend
         context.font = "12px monospace";
-        context.fillText("1 pixel = 10 people", 280, 550);
+        context.fillText("1 pixel = 5000 people", 15, 150);
         
         context.fillStyle = "#91bfdb";
-        context.fillRect(280, 560, 5, 5);
+        context.fillRect(5, 160, 5, 5);
         
-        context.fillStyle = "#000";
-        context.fillText("Lived in D.C. over 1 year", 290, 567);
+        context.fillStyle = "#00F";
+        context.fillText("PP", 15, 167);
         
         context.fillStyle = "#fc8d59";
-        context.fillRect(280, 575, 5, 5);
+        context.fillRect(5, 175, 5, 5);
         
         context.fillStyle = "#000";
-        context.fillText("Move to D.C. in last year", 290, 582);
+        context.fillText("PSOE", 15, 182);
       });
       
       // Creates a bound set of points with a specific density
