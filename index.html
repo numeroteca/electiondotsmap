@@ -22,7 +22,7 @@
 
       var context = canvas.node().getContext("2d");
 
-			var projection = d3.geo.conicConformalSpain()
+			var projection = d3.geo.conicConformalSpain() //projection to display Canaries
 				.scale(3500)
          .translate([170+width / 2, height / 2 - 100]);
 
@@ -30,9 +30,8 @@
           .projection(projection)
           .context(context)
 
-      d3.json("recintos_autonomicas_inspire_peninbal_etrs89_simplificado_2.json", function(error, dc) {
-//recintos_autonomicas_inspire_peninbal_etrs89.geojson dc.json
-//recintos_autonomicas_inspire_peninbal_etrs89_simplificado_2.json
+      d3.json("spain_elections_20d_2015.json", function(error, dc) {
+
         if (error) throw error;
         
         dc.features
@@ -86,8 +85,6 @@
               context.fillRect(x + d[0], y + d[1], 1, 1); 
             });
 
-
-						
             context.restore();  // removes the clip path
           });
         
@@ -108,6 +105,7 @@
         
         //context.fillStyle = "#000";
         //context.fillText("PSOE", 15, 182);
+
       });
       
       // Creates a bound set of points with a specific density
@@ -119,6 +117,7 @@
         var area = width * height * p; // area of the polygon
         
         // radius needed to get roughly the correct dot density in the polygon
+				//TODO Important, I don't know how may dots it is plotting
         var radius = Math.sqrt(area / (1.62*n));
         // (took some playing around to get this ratio, probably could work out 
         //  the math to get a closer approximation but it wouldn't be noticable
