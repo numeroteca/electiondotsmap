@@ -7,7 +7,8 @@
     </style>
   </head>
   <body>
-     <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+		<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+		<script src="conicConformalSpain-proj.min.js"></script>
      <script>
       var width = 960,
           height = 960;
@@ -21,13 +22,9 @@
 
       var context = canvas.node().getContext("2d");
 
-      var projection = d3.geo.mercator()
-          .scale(3000)
-//.scale(400000)
-          .translate([width / 2, height / 2])
-          .center([-4.03188898,37.54455857999996]);
-//spain .center([-2.75, 42.03]);
-//dc .center([-77.02, 38.894]);
+			var projection = d3.geo.conicConformalSpain()
+				.scale(3500)
+         .translate([170+width / 2, height / 2 - 100]);
 
       var path = d3.geo.path()
           .projection(projection)
@@ -70,9 +67,8 @@
             var p = feature.properties.area / (width * height);
             
             // desired number of pixels to draw in polygon (only approximates) 
-            var n = feature.properties.PP / 5000; //draws 1 pixel per 10 houses
-            //var n = feature.properties.mobility_total / 7;
-						//	"NATCODE"
+            var n = feature.properties.ABSTENCIONES / 5000; //draws 1 pixel per 10 houses
+            //change ABSTENCIONES with PP, PSOE, PODEMOS or CIUDADANOS
 
             var points = createPoints(width, height, p, n);
             
@@ -83,7 +79,7 @@
               // blue for old resident, orange for new resident
               //context.fillStyle = Math.random() < feature.properties.pct_resident ? 
                //   "#ff0000" : "#00FF00";
-							context.fillStyle = "#00F";
+							context.fillStyle = "#000";
                   
               // draw pixel
               // (doesn't show up on map if it's outside the polygon b/c of clip)            
@@ -101,17 +97,17 @@
         context.font = "12px monospace";
         context.fillText("1 pixel = 5000 people", 15, 150);
         
-        context.fillStyle = "#91bfdb";
-        context.fillRect(5, 160, 5, 5);
+        //context.fillStyle = "#91bfdb";
+        //context.fillRect(5, 160, 5, 5);
         
-        context.fillStyle = "#00F";
-        context.fillText("PP", 15, 167);
+        //context.fillStyle = "#00F";
+        //context.fillText("PP", 15, 167);
         
-        context.fillStyle = "#fc8d59";
-        context.fillRect(5, 175, 5, 5);
+        //context.fillStyle = "#fc8d59";
+        //context.fillRect(5, 175, 5, 5);
         
-        context.fillStyle = "#000";
-        context.fillText("PSOE", 15, 182);
+        //context.fillStyle = "#000";
+        //context.fillText("PSOE", 15, 182);
       });
       
       // Creates a bound set of points with a specific density
